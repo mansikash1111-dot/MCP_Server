@@ -198,7 +198,7 @@ Do not write any commentary outside the JSON object.`;
 const frontendBuildPath = path.join(__dirname, '..', 'frontend', 'dist');
 if (fs.existsSync(frontendBuildPath)) {
     app.use(express.static(frontendBuildPath));
-    app.get('*', (req, res) => {
+    app.use((req, res) => {
         res.sendFile(path.join(frontendBuildPath, 'index.html'));
     });
 }
