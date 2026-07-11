@@ -1,0 +1,50 @@
+{
+  "name": "ai-agent-and-mcp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "download:reviews": "ts-node src/ingestion/downloader.ts",
+    "pulse": "ts-node src/main.ts",
+    "auth": "node \"C:\\Users\\hp\\MCP Server\\scripts\\generate-google-tokens.mjs\"",
+    "server": "ts-node src/server.ts",
+    "frontend": "npm --prefix frontend run dev",
+    "dev": "concurrently \"npm run server\" \"npm run frontend\"",
+    "full:pipeline": "npm run download:reviews && npm run pulse",
+    "build": "npm --prefix frontend install && npm --prefix frontend run build && tsc",
+    "prestart": "node dist/setup-tokens.js",
+    "start": "node dist/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "app-store-scraper": "^0.18.0",
+    "cors": "^2.8.6",
+    "csv-parse": "^7.0.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "franc-cjs": "^6.2.0",
+    "google-play-scraper": "^10.1.3",
+    "groq-sdk": "^1.3.0",
+    "hinglish-words": "^1.0.0",
+    "languagedetect": "^2.0.0",
+    "node-cron": "^4.5.0",
+    "openai": "^6.45.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.1.0",
+    "@types/node-cron": "^3.0.11",
+    "concurrently": "^10.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}
