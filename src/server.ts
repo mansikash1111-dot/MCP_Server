@@ -203,6 +203,6 @@ if (fs.existsSync(frontendBuildPath)) {
     });
 }
 
-app.listen(port, () => {
-    console.log(`🚀 API Server listening at http://localhost:${port}`);
+app.listen(Number(port), '0.0.0.0', () => {
+    console.log(`🚀 API Server listening at http://0.0.0.0:${port}`);
 });
