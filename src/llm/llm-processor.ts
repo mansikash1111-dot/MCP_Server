@@ -1,6 +1,6 @@
 import Groq from 'groq-sdk';
 import { RawReview } from '../ingestion/file-reader';
-import { RateLimiter, estimateTokens } from './rate-limiter';
+import { RateLimiter, estimateTokens, GROQ_LLAMA33_70B_LIMITS } from './rate-limiter';
 
 export interface LLMReportOutput {
     themes: string[];
