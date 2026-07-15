@@ -4,6 +4,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 export class DocsMCPClient {
     private client: Client;
     private transport: StdioClientTransport | null = null;
+    private disabled: boolean = false;
 
     constructor() {
         this.client = new Client({
@@ -15,20 +16,48 @@ export class DocsMCPClient {
     }
 
     async connect() {
-        const command = process.env.GOOGLE_DOCS_MCP_SERVER_COMMAND || "npx";
-        const argsStr = process.env.GOOGLE_DOCS_MCP_SERVER_ARGS || "-y,@modelcontextprotocol/server-google-docs";
-        const args = argsStr.split(',').map(arg => arg.trim());
+        // If no explicit server command was configured, MCP integration is
+        // considered unavailable (e.g. running on Railway without a custom
+        // Google Docs MCP server). Skip attempting to spawn a process.
+        const command = process.env.GOOGLE_DOCS_MCP_SERVER_COMMAND;
+        if (!command) {
+            console.warn(
+                "⚠️ GOOGLE_DOCS_MCP_SERVER_COMMAND is not set. Google Docs MCP integration is disabled."
+            );
+            this.disabled = true;
+            return;
+        }
 
-        this.transport = new StdioClientTransport({
-            command,
-            args
-        });
+        const argsStr = process.env.GOOGLE_DOCS_MCP_SERVER_ARGS || "";
+        const args = argsStr
+            ? argsStr.split(',').map(arg => arg.trim())
+            : [];
 
-        await this.client.connect(this.transport);
+        try {
+            this.transport = new StdioClientTransport({
+                command,
+                args
+            });
+
+            await this.client.connect(this.transport);
+        } catch (error: any) {
+            console.warn(
+                `⚠️ Failed to connect to Google Docs MCP server (${command}). Disabling Google Docs integration. Reason: ${error?.message || error}`
+            );
+            this.disabled = true;
+            this.transport = null;
+        }
     }
 
     async createPulseDocument(title: string, markdownContent: string): Promise<string> {
-        if (!this.transport) await this.connect();
+        if (!this.transport && !this.disabled) {
+            await this.connect();
+        }
+
+        if (this.disabled || !this.transport) {
+            console.warn("⚠️ Google Docs MCP integration is unavailable. Skipping document creation.");
+            return "Google Docs MCP integration unavailable (skipped)";
+        }
 
         try {
             const response = await this.client.callTool({
