@@ -1,0 +1,29 @@
+# Node / Build directories
+node_modules/
+dist/
+build/
+
+# Local Environment Secrets
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Data and Outputs
+data/exports/
+output/
+
+# Editor / System settings
+.DS_Store
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
