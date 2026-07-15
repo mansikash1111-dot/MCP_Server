@@ -85,9 +85,10 @@ export async function processReviews(reviews: RawReview[]): Promise<LLMReportOut
         console.log(`📊 [LLM Engine] Sampled ${targetReviews.length} representative reviews across rating tiers from ${reviews.length} total reviews.`);
     }
 
-    // Chunk reviews based on token budget (TPM <= 1000)
-    const reviewChunks = chunkReviews(targetReviews, 650);
-    console.log(`📦 [LLM Engine] Split ${targetReviews.length} reviews into ${reviewChunks.length} chunk(s) (Target TPM <= 1000).`);
+    // Dynamically calculate review tokens budget based on actual TPM limits and prompts
+    const maxReviewsTokens = Math.max(100, Math.floor(GROQ_LLAMA33_70B_LIMITS.tpm * 0.85) - estimateTokens(SYSTEM_PROMPT) - 300);
+    const reviewChunks = chunkReviews(targetReviews, maxReviewsTokens);
+    console.log(`📦 [LLM Engine] Split ${targetReviews.length} reviews into ${reviewChunks.length} chunk(s) (Target TPM <= 1000, Chunk Max: ${maxReviewsTokens} tokens).`);
 
     if (reviewChunks.length === 1) {
         // Single chunk processing
