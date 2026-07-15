@@ -15,7 +15,7 @@
     "frontend": "npm --prefix frontend run dev",
     "dev": "concurrently \"npm run server\" \"npm run frontend\"",
     "full:pipeline": "npm run download:reviews && npm run pulse",
-    "build": "npm --prefix frontend install && npm --prefix frontend run build && node node_modules/typescript/lib/tsc.js",
+    "build": "npm --prefix mcp-server install && npm --prefix mcp-server run build && npm --prefix frontend install && npm --prefix frontend run build && node node_modules/typescript/lib/tsc.js",
     "prestart": "node dist/setup-tokens.js",
     "start": "node dist/server.js"
   },

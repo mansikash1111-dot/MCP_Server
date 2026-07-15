@@ -1,5 +1,7 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class GmailMCPClient {
     private client: Client;
@@ -15,9 +17,20 @@ export class GmailMCPClient {
     }
 
     async connect() {
-        const command = process.env.GMAIL_MCP_SERVER_COMMAND || "npx";
-        const argsStr = process.env.GMAIL_MCP_SERVER_ARGS || "-y,@modelcontextprotocol/server-gmail";
-        const args = argsStr.split(',').map(arg => arg.trim());
+        let command = process.env.GMAIL_MCP_SERVER_COMMAND;
+        let args: string[] = [];
+
+        // Check for packaged custom local MCP server
+        const localMcpPath = path.resolve(__dirname, '..', '..', 'mcp-server', 'dist', 'src', 'index.js');
+        if (!command && fs.existsSync(localMcpPath)) {
+            console.log(`🔌 [Gmail MCP] Launching custom local MCP Server at ${localMcpPath}`);
+            command = "node";
+            args = [localMcpPath];
+        } else {
+            command = command || "npx";
+            const argsStr = process.env.GMAIL_MCP_SERVER_ARGS || "-y,@modelcontextprotocol/server-gmail";
+            args = argsStr.split(',').map(arg => arg.trim());
+        }
 
         this.transport = new StdioClientTransport({
             command,
