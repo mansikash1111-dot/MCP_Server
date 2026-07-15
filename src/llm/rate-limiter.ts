@@ -61,7 +61,7 @@ export class RateLimiter {
     public async waitForCapacity(estimatedRequestTokens: number): Promise<void> {
         this.cleanOldEntries();
 
-        const maxTokensPerRequest = Math.floor(this.config.tpm * 0.85); // 850 tokens safety ceiling
+        const maxTokensPerRequest = Math.floor(this.config.tpm * 0.90); // 900 tokens safety ceiling
         if (estimatedRequestTokens > maxTokensPerRequest) {
             console.warn(`[RateLimiter] Warning: Request size (${estimatedRequestTokens} tokens) exceeds target safety chunk limit (${maxTokensPerRequest} tokens).`);
         }
